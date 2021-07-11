@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq.Dynamic.Core.Exceptions;
@@ -1304,6 +1304,69 @@ namespace System.Linq.Dynamic.Core.Tests
             Assert.Equal(expected.Count(), result.Count());
         }
 
+        public class DefaultDynamicLinqCustomTypeProviderForStaticTesting : CustomTypeProviders.DefaultDynamicLinqCustomTypeProvider
+        {
+            public override HashSet<Type> GetCustomTypes() => new HashSet<Type>(base.GetCustomTypes()) { typeof(Methods), typeof(MethodsItemExtension) };
+        }
+
+        [Fact]
+        public void ExpressionTests_MethodCall_GenericStatic()
+        {
+            var config = new ParsingConfig
+            {
+                CustomTypeProvider = new DefaultDynamicLinqCustomTypeProviderForStaticTesting()
+            };
+
+            // Arrange
+            var list = new[] { 0, 1, 2, 3, 4 }.Select(value => new Methods.Item { Value = value }).ToArray();
+
+            // Act
+            var expectedResult = list.Where(x => Methods.StaticGenericMethod(x));
+            var result = list.AsQueryable().Where(config, "Methods.StaticGenericMethod(it)");
+
+            // Assert
+            Assert.Equal(expectedResult.Count(), result.Count());
+        }
+
+        [Fact]
+        public void ExpressionTests_MethodCall_Generic()
+        {
+            var config = new ParsingConfig
+            {
+                CustomTypeProvider = new DefaultDynamicLinqCustomTypeProviderForStaticTesting()
+            };
+
+            // Arrange
+            var list = new[] { 0, 1, 2, 3, 4 }.Select(value => new Methods.Item { Value = value }).ToArray();
+
+            // Act
+            var methods = new Methods();
+            var expectedResult = list.Where(x => methods.GenericMethod(x));
+            var result = list.AsQueryable().Where("@0.GenericMethod(it)", methods);
+
+            // Assert
+            Assert.Equal(expectedResult.Count(), result.Count());
+        }
+
+        [Fact]
+        public void ExpressionTests_MethodCall_GenericExtension()
+        {
+            var config = new ParsingConfig
+            {
+                CustomTypeProvider = new DefaultDynamicLinqCustomTypeProviderForStaticTesting()
+            };
+
+            // Arrange
+            var list = new[] { 0, 1, 2, 3, 4 }.Select(value => new Methods.Item { Value = value }).ToArray();
+
+            // Act
+            var methods = new Methods();
+            var expectedResult = list.Where(x => MethodsItemExtension.Functions.EfCoreCollate(x.Value, "tlh-KX") == 2);
+            var result = list.AsQueryable().Where(config, "MethodsItemExtension.Functions.EfCoreCollate(it.Value,\"tlh-KX\")==2");
+
+            // Assert
+            Assert.Equal(expectedResult.Count(), result.Count());
+        }
 
         [Fact]
         public void ExpressionTests_MethodCall_ValueTypeToValueTypeParameter()

@@ -1745,9 +1745,12 @@ namespace System.Linq.Dynamic.Core.Parser
                             throw ParseError(errorPos, Res.MethodsAreInaccessible, TypeHelper.GetTypeName(method.DeclaringType));
                         }
 
-                        if (expression == null)
+                        if (method.IsGenericMethod)
                         {
-                            return Expression.Call(null, method, args);
+                            var genericParameters = method.GetParameters().Where(p => p.ParameterType.IsGenericParameter);
+                            var typeArguments = genericParameters.Select(a => args[a.Position].Type);
+                            var constructedMethod = method.MakeGenericMethod(typeArguments.ToArray());
+                            return Expression.Call(expression, constructedMethod, args);
                         }
                         else
                         {

@@ -58,7 +58,7 @@ namespace System.Linq.Dynamic.Core.Parser.SupportedMethods
                 {
                     if (_parsingConfig.CustomTypeProvider.GetExtensionMethods().TryGetValue(t, out var extensionMethodsOfType))
                     {
-                        methods.AddRange(extensionMethodsOfType.Where(m => m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase) && !m.IsGenericMethod));
+                        methods.AddRange(extensionMethodsOfType.Where(m => m.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)));
                     }
                 }
 
