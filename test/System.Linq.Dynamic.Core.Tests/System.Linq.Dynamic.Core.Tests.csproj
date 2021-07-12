@@ -9,6 +9,12 @@
         <AssemblyOriginatorKeyFile>../../src/System.Linq.Dynamic.Core/System.Linq.Dynamic.Core.snk</AssemblyOriginatorKeyFile>
         <ProjectGuid>{912FBF24-3CAE-4A50-B5EA-E525B9FAEC80}</ProjectGuid>
     </PropertyGroup>
+    <ItemGroup>
+      <Compile Remove="EntitiesTests.FormattableString.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="EntitiesTests.FormattableString.cs" />
+    </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\System.Linq.Dynamic.Core\System.Linq.Dynamic.Core.csproj" />

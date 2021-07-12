@@ -22,6 +22,19 @@ var query = db.Customers
     .Select("new(CompanyName as Name, Phone)");
 ```
 
+Interpolated strings are supported on .NET 4.6(and above), .NET Core 2.1(and above), .NET Standard 1.3(and above) and UAP 10.0(and above).
+For example:
+```csharp
+string cityName = "London";
+int c = 10;
+db.Customers
+    .WhereInterpolated($"City == {cityName} and Orders.Count >= {c}");
+	
+users.FirstInterpolated($"Income > {value}");	
+
+context.Blogs.CountInterpolatedAsync($"Name.Contains({search})");
+```
+
 ## Useful links
 
 - [Website](https://dynamic-linq.net/)
